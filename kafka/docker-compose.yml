@@ -1,0 +1,47 @@
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.7.1
+    container_name: kafka-flink
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      # external SASL listener for Flink; internal PLAINTEXT used only for topic-init within this container
+      KAFKA_LISTENERS: SASL_PLAINTEXT://0.0.0.0:9092,PLAINTEXT://0.0.0.0:29092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://localhost:9092,PLAINTEXT://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,SASL_PLAINTEXT:SASL_PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
+      CLUSTER_ID: "Xf1v8xxnRnmYBfGx7LPyJQ"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - ./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf:ro
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
+    # override entrypoint so we can run topic creation after broker is ready, then hand off to kafka
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        /etc/confluent/docker/run &
+        KAFKA_PID=$!
+        trap "kill $KAFKA_PID; wait $KAFKA_PID" TERM INT
+
+        until kafka-topics --bootstrap-server localhost:29092 --list >/dev/null 2>&1; do
+          sleep 2
+        done
+
+        kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic flink-input  --partitions 3 --replication-factor 1
+        kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic flink-output --partitions 3 --replication-factor 1
+        echo "Topics flink-input and flink-output ready"
+
+        wait $KAFKA_PID
+
+volumes:
+  kafka_data:
