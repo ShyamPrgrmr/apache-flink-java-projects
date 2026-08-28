@@ -1,0 +1,1 @@
+Reading the data from the kafka input topic and putting data in kafka output topic 
