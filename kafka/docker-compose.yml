@@ -23,7 +23,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
     volumes:
       - ./kafka_server_jaas.conf:/etc/kafka/kafka_server_jaas.conf:ro
-      - kafka_data:/var/lib/kafka/data
     restart: unless-stopped
     # override entrypoint so we can run topic creation after broker is ready, then hand off to kafka
     entrypoint: ["/bin/bash", "-c"]
@@ -43,5 +42,3 @@ services:
 
         wait $KAFKA_PID
 
-volumes:
-  kafka_data:
