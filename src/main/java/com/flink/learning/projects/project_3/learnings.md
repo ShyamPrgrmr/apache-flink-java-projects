@@ -19,3 +19,4 @@ A Tumbling Window divides time into equal, non-overlapping intervals.
 * After emitting the result, Flink clears the state for that completed window and starts a new window for the next time interval.
 
 
+### Linkedin Post: https://lnkd.in/p/dpMgEjYB
