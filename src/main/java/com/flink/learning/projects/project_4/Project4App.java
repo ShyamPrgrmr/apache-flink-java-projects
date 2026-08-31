@@ -51,7 +51,7 @@ public class Project4App implements FlinkJob{
         KafkaSource<CPU> source = KafkaSource.<CPU>builder()
             .setBootstrapServers(this.bootstrapServer)
             .setTopics(this.sourceTopic)
-            .setGroupId("consumer-group-1-version-1.0.0")
+            .setGroupId(this.groupId)
             .setStartingOffsets(OffsetsInitializer.earliest())
             .setProperty("commit.offsets.on.checkpoint", "true")
             .setDeserializer(
