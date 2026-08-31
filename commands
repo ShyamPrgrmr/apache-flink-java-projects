@@ -3,4 +3,4 @@
 cd /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects && JAVA_TOOL_OPTIONS="--add-opens=java.base/java.util=ALL-UNNAMED" mvn spring-boot:run -Dspring-boot.run.arguments="--job.name=cpu-event-generator"
 
 
-cd /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects && JAVA_TOOL_OPTIONS="--add-opens=java.base/java.util=ALL-UNNAMED" mvn spring-boot:run -Dspring-boot.run.arguments="--job.name=project3"
+cd /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects && JAVA_TOOL_OPTIONS="--add-opens=java.base/java.util=ALL-UNNAMED" mvn spring-boot:run -Dspring-boot.run.arguments="--job.name=project4"

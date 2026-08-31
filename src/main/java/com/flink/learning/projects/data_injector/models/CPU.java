@@ -16,4 +16,5 @@ import lombok.ToString;
 public class CPU {
     private String name;
     private double usage;
+    private long timestamp;
 }

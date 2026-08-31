@@ -61,6 +61,7 @@ public class KafkaTopicCPUEventInjector implements FlinkJob {
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
+        
 
     
         DataStream<CPU> stream = env.fromSequence(0, Long.MAX_VALUE)
@@ -69,17 +70,20 @@ public class KafkaTopicCPUEventInjector implements FlinkJob {
 
                 out.collect(new CPU(
                     "EC2-CPU-1",
-                    ThreadLocalRandom.current().nextDouble(0, 100)
+                    ThreadLocalRandom.current().nextDouble(0, 100),
+                    System.currentTimeMillis()
                 ));
 
                 out.collect(new CPU(
                     "EC2-CPU-2",
-                    ThreadLocalRandom.current().nextDouble(0, 100)
+                    ThreadLocalRandom.current().nextDouble(0, 100),
+                    System.currentTimeMillis()
                 ));
-
+                long currentTime = System.currentTimeMillis();
                 out.collect(new CPU(
                     "EC2-CPU-3",
-                    ThreadLocalRandom.current().nextDouble(0, 100)
+                    ThreadLocalRandom.current().nextDouble(0, 100),
+                    currentTime
                 ));
         }).returns(CPU.class);
 
