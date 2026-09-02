@@ -1,13 +1,18 @@
 package com.flink.learning.projects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
 public class ProjectsApplication {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectsApplication.class);
+    public static void main(String[] args) throws Exception {
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(ProjectsApplication.class, args);
-	}
+        logger.info("Main started");
 
+        try (AnnotationConfigApplicationContext context =
+                     new AnnotationConfigApplicationContext(AppConfig.class)) {
+            logger.info("Context initialized");
+            context.getBean(JobRunner.class).run(args);
+        }
+    }
 }

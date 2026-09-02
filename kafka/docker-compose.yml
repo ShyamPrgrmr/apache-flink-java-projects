@@ -30,15 +30,15 @@ services:
       - |
         /etc/confluent/docker/run &
         KAFKA_PID=$!
-        trap "kill $KAFKA_PID; wait $KAFKA_PID" TERM INT
+        trap "kill $$KAFKA_PID; wait $$KAFKA_PID" TERM INT
 
         until kafka-topics --bootstrap-server localhost:29092 --list >/dev/null 2>&1; do
           sleep 2
         done
 
-        kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic flink-input  --partitions 3 --replication-factor 1
-        kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic flink-output --partitions 3 --replication-factor 1
+        kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic flink-input  --partitions 1 --replication-factor 1
+        kafka-topics --bootstrap-server localhost:29092 --create --if-not-exists --topic flink-output --partitions 1 --replication-factor 1
         echo "Topics flink-input and flink-output ready"
 
-        wait $KAFKA_PID
+        wait $$KAFKA_PID
 

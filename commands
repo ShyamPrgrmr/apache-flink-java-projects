@@ -1,6 +1,21 @@
-
-
 cd /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects && JAVA_TOOL_OPTIONS="--add-opens=java.base/java.util=ALL-UNNAMED" mvn spring-boot:run -Dspring-boot.run.arguments="--job.name=cpu-event-generator"
 
 
-cd /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects && JAVA_TOOL_OPTIONS="--add-opens=java.base/java.util=ALL-UNNAMED" mvn spring-boot:run -Dspring-boot.run.arguments="--job.name=project4"
+Local - 
+./mvnw clean package
+java -jar /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects/target/projects-0.0.1-SNAPSHOT.jar --job.name=project0
+
+
+
+Kafka Producer
+kafka-console-producer --bootstrap-server localhost:9092 --topic flink-input
+
+
+
+Cluster - 
+./mvnw clean package -Pcluster
+
+
+Project Path:
+
+/Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects/src/main/java/com/flink/learning/projects/

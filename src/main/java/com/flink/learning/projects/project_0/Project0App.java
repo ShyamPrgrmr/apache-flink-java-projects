@@ -21,14 +21,13 @@ public class Project0App implements FlinkJob {
     private String groupId;
 
     @Value("${kafka.consumer.topic}")
-    private String topic;
+    private String sourceTopic;
 
     @Value("${kafka.username}")
     private String username;
 
     @Value("${kafka.password}")
     private String password;
-
     @Override
     public String name() {
         return "project0";
@@ -37,20 +36,15 @@ public class Project0App implements FlinkJob {
     @Override
     public void run() throws Exception {
         KafkaSource<String> source = KafkaSource.<String>builder()
-            .setBootstrapServers(this.bootstrapServer)
-            .setTopics(this.topic)
-            .setGroupId(this.groupId)
+            .setBootstrapServers(bootstrapServer)
+            .setTopics(sourceTopic)
+            .setGroupId(groupId)
             .setStartingOffsets(OffsetsInitializer.earliest())
             .setValueOnlyDeserializer(new SimpleStringSchema())
-            .setProperty("security.protocol", "SASL_PLAINTEXT")
-            .setProperty("sasl.mechanism", "PLAIN")
-            .setProperty("sasl.jaas.config",
-                "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-                "username=\"" + this.username + "\" password=\"" + this.password + "\";")
             .build();
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(3);
+        env.setParallelism(1);
 
 
         DataStream<String> stream = env.fromSource(
