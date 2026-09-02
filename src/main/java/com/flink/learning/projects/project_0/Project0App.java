@@ -23,11 +23,6 @@ public class Project0App implements FlinkJob {
     @Value("${kafka.consumer.topic}")
     private String sourceTopic;
 
-    @Value("${kafka.username}")
-    private String username;
-
-    @Value("${kafka.password}")
-    private String password;
     @Override
     public String name() {
         return "project0";
