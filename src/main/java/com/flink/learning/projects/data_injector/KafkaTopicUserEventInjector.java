@@ -6,6 +6,8 @@ import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
 import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,22 +20,26 @@ import jakarta.annotation.PostConstruct;
 @Component
 public class KafkaTopicUserEventInjector implements FlinkJob {
 
+    private static final Logger logger = LoggerFactory.getLogger(KafkaTopicUserEventInjector.class);
+
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServer;
 
     @Value("${kafka.consumer.topic}")
     private String destinationTopic;
 
-    @Value("${kafka.username}")
-    private String username;
-
-    @Value("${kafka.password}")
-    private String password;
-
     private KafkaSink<User> sink;
+
+    @Override
+    public String name() {
+        return "user-event-generator";
+    }
 
     @PostConstruct
     public void init() {
+        logger.info("Bootstrap: " + bootstrapServer);
+        logger.info("Topic: " + destinationTopic);
+
         this.sink = KafkaSink.<User>builder()
             .setBootstrapServers(this.bootstrapServer)
             .setRecordSerializer(
@@ -41,19 +47,9 @@ public class KafkaTopicUserEventInjector implements FlinkJob {
                     .setTopic(this.destinationTopic)
                     .setValueSerializationSchema(new UserSerializationSchema())
                     .build())
-            .setProperty("security.protocol", "SASL_PLAINTEXT")
-            .setProperty("sasl.mechanism", "PLAIN")
-            .setProperty(
-                "sasl.jaas.config",
-                "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-                "username=\"" + this.username + "\" password=\"" + this.password + "\";")
             .build();
     }
 
-    @Override
-    public String name() {
-        return "user-event-generator";
-    }
 
     @Override
     public void run() throws Exception {

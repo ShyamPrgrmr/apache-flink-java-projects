@@ -5,11 +5,15 @@ import org.apache.flink.api.common.state.ValueStateDescriptor;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.flink.learning.projects.data_injector.models.User;
 
 public class UserCountProcessFunction
         extends KeyedProcessFunction<String, User, User> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UserCountProcessFunction.class);
 
     private ValueState<Integer> countState;
 
@@ -33,6 +37,12 @@ public class UserCountProcessFunction
         if (count == null) {
             count = 0;
         }
+
+        int subtask = getRuntimeContext()
+            .getTaskInfo()
+            .getIndexOfThisSubtask();
+
+        LOG.info("Subtask {} processed {} count={}", subtask, user.getUserId(),count);
 
         count++;
 

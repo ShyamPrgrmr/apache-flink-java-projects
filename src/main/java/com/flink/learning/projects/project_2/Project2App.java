@@ -15,10 +15,12 @@ import org.springframework.stereotype.Component;
 import com.flink.learning.projects.FlinkJob;
 import com.flink.learning.projects.data_injector.models.User;
 import com.flink.learning.projects.serialization_helpers.UserDeserializationSchema;
+  
 
 
 @Component
 public class Project2App implements FlinkJob{
+    
     @Value("${kafka.bootstrap-servers}")
     private String bootstrapServer;
 
@@ -30,12 +32,6 @@ public class Project2App implements FlinkJob{
 
     @Value("${kafka.producer.topic}")
     private String destinationTopic;
-
-    @Value("${kafka.username}")
-    private String username;
-
-    @Value("${kafka.password}")
-    private String password;
 
     @Override
     public String name() {
@@ -53,11 +49,9 @@ public class Project2App implements FlinkJob{
             .setDeserializer(
                 KafkaRecordDeserializationSchema.valueOnly(new UserDeserializationSchema())
             )
-            .setProperty("security.protocol", "SASL_PLAINTEXT")
-            .setProperty("sasl.mechanism", "PLAIN")
-            .setProperty("sasl.jaas.config",
-                "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-                "username=\"" + this.username + "\" password=\"" + this.password + "\";")
+            //.setProperty("security.protocol", "SASL_PLAINTEXT")
+            //.setProperty("sasl.mechanism", "PLAIN")
+            //.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required " +"username=\"" + this.username + "\" password=\"" + this.password + "\";")
             .build();
 
         KafkaSink<String> sink = KafkaSink.<String>builder()
@@ -67,15 +61,13 @@ public class Project2App implements FlinkJob{
                 .setValueSerializationSchema(new SimpleStringSchema())
                 .build()
             )
-            .setProperty("security.protocol", "SASL_PLAINTEXT")
-            .setProperty("sasl.mechanism", "PLAIN")
-            .setProperty("sasl.jaas.config",
-                "org.apache.kafka.common.security.plain.PlainLoginModule required " +
-                "username=\"" + this.username + "\" password=\"" + this.password + "\";")
+            //.setProperty("security.protocol", "SASL_PLAINTEXT")
+            //.setProperty("sasl.mechanism", "PLAIN")
+            //.setProperty("sasl.jaas.config","org.apache.kafka.common.security.plain.PlainLoginModule required " + "username=\"" + this.username + "\" password=\"" + this.password + "\";")
             .build();
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
+        env.setParallelism(2);
         env.enableCheckpointing(10000); // Enable checkpointing every 10 seconds
             
 
