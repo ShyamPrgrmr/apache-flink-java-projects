@@ -19,3 +19,11 @@ Cluster -
 Project Path:
 
 /Users/shyampradhan/Desktop/Projects/DataEngineering/Flink/projects/src/main/java/com/flink/learning/projects/
+
+
+Kafka read new messages - 
+
+
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic flink-output
